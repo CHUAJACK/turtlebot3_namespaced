@@ -20,6 +20,7 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.actions import IncludeLaunchDescription
+from launch.actions import TimerAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
@@ -30,8 +31,7 @@ ROS_DISTRO = os.environ.get('ROS_DISTRO')
 
 def generate_launch_description():
     namespace = LaunchConfiguration('namespace', default='tb3_1')
-    use_sim_time = LaunchConfiguration('use_sim_time', default='false')
-    package_dir = get_package_share_directory('turtlebot3_navigation2_tb3_1')
+    use_sim_time = LaunchConfiguration('use_sim_time', default='True')
     map_dir = LaunchConfiguration(
         'map',
         default=os.path.join(
@@ -39,27 +39,21 @@ def generate_launch_description():
             'map',
             'map.yaml'))
 
-    param_file_name = TURTLEBOT3_MODEL + '.yaml'
-    if ROS_DISTRO == 'humble':
-        param_dir = LaunchConfiguration(
-            'params_file',
-            default=os.path.join(
-                package_dir,
-                'param',
-                ROS_DISTRO,
-                param_file_name))
-    else:
-        param_dir = LaunchConfiguration(
-            'params_file',
-            default=os.path.join(
-                package_dir,
-                'param',
-                param_file_name))
 
-    launch_dir = os.path.join(package_dir, 'launch')
+        
+    param_dir = LaunchConfiguration(
+        'params_file',
+        default=os.path.join(
+            get_package_share_directory('turtlebot3_navigation2_tb3_1'),
+            "param",
+            "burger3310.yaml"
+        )
+    )
+
+    launch_dir = os.path.join(get_package_share_directory('turtlebot3_navigation2_tb3_1'), 'launch')
 
     rviz_config_dir = os.path.join(
-        package_dir,
+        get_package_share_directory('turtlebot3_navigation2_tb3_1'),
         'rviz',
         'tb3_navigation2.rviz')
 
@@ -81,7 +75,7 @@ def generate_launch_description():
 
         DeclareLaunchArgument(
             'use_sim_time',
-            default_value='false',
+            default_value='True',
             description='Use simulation (Gazebo) clock if true'),
 
         IncludeLaunchDescription(
@@ -89,20 +83,37 @@ def generate_launch_description():
             launch_arguments={
                 'namespace': namespace,
                 'use_namespace': 'True',
+                'slam':"True",
                 'map': map_dir,
                 'use_sim_time': use_sim_time,
                 'params_file': param_dir}.items(),
         ),
 
-        Node(
-            package='rviz2',
-            executable='rviz2',
-            name='rviz2',
-            arguments=['-d', rviz_config_dir],
-            parameters=[{'use_sim_time': use_sim_time}],
-            remappings=[
-                ('/tf', ['/', namespace, '/tf']),
-                ('/tf_static', ['/', namespace, '/tf_static']),
-            ],
-            output='screen'),
+        # RViz runs INSIDE the namespace so the Nav2/Docking panels + GoalTool create their
+        # action clients as /<namespace>/navigate_to_pose, /follow_waypoints, /dock_robot, etc.
+        # (an un-namespaced RViz makes global /navigate_to_pose clients with no matching server).
+        # The .rviz display topics are already absolute /tb3_1/... so the namespace doesn't touch
+        # them; the /tf remaps force RViz's TF listener onto the namespaced /tb3_1/tf topics.
+        #
+        # Delayed by TimerAction: RViz is graphics-heavy at startup and, if it races the nav2
+        # lifecycle bringup, it can starve the controller_server 'configure' transition, timing
+        # out its change_state response and stalling the whole nav stack (seen as controller_server
+        # stuck 'inactive', everything downstream 'unconfigured'). Starting RViz after bringup
+        # settles avoids that contention.
+        TimerAction(
+            period=12.0,
+            actions=[
+                Node(
+                    package='rviz2',
+                    executable='rviz2',
+                    name='rviz2',
+                    namespace=namespace,
+                    arguments=['-d', rviz_config_dir],
+                    parameters=[{'use_sim_time': use_sim_time}],
+                    remappings=[
+                        ('/tf', ['/', namespace, '/tf']),
+                        ('/tf_static', ['/', namespace, '/tf_static']),
+                    ],
+                    output='screen'),
+            ]),
     ])
