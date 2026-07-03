@@ -7,7 +7,7 @@
 ---
 
 # 🏷️ Namespacing (this fork): Structure & How to Change the Namespace
-
+# CLONE THIS ALONGSIDE THE ROBOTIS turtlebot3 repo
 This fork wraps the stock TurtleBot3 stack so every node, topic, action and TF frame
 lives under a per-robot namespace. **The default namespace is `tb3_1`.** This section
 explains where `tb3_1` lives and exactly what to edit to rename it (e.g. `tb3_1` → `robot_a`).
