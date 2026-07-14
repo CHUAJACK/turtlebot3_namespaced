@@ -4,6 +4,7 @@
 - Active Branches: humble, jazzy, main(rolling)
 - Legacy Branches: *-devel, noetic
 
+<<<<<<< HEAD
 ---
 
 # 🏷️ Namespacing (this fork): Structure & How to Change the Namespace
@@ -109,6 +110,13 @@ call, and `package://..._tb3_1/` mesh paths in the URDFs. Do this **in addition 
 currently hardcode `tb3_1/` instead of using it. If you replace the hardcoded `tb3_1/` frame
 prefixes in `param/*.yaml` with `<robot_namespace>/`, Level 3 will follow the `namespace:=`
 launch argument automatically and you'll only ever set the namespace in one place.
+=======
+## Fork Feature:
+- add namespace to run turtlebot3 using node namespaces so that you can run multiple tb3s concurrently
+- tf frames have the namespace as the frame prefix
+- omitting the namespace argument in launch just results in this package acting like the normal turtlebot3 package
+
+>>>>>>> no_suffix
 
 ## Open Source Projects Related to TurtleBot3
 - [turtlebot3](https://github.com/ROBOTIS-GIT/turtlebot3)
