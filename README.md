@@ -4,6 +4,12 @@
 - Active Branches: humble, jazzy, main(rolling)
 - Legacy Branches: *-devel, noetic
 
+## Fork Feature:
+- add namespace to run turtlebot3 using node namespaces so that you can run multiple tb3s concurrently
+- tf frames have the namespace as the frame prefix
+- omitting the namespace argument in launch just results in this package acting like the normal turtlebot3 package
+
+
 ## Open Source Projects Related to TurtleBot3
 - [turtlebot3](https://github.com/ROBOTIS-GIT/turtlebot3)
 - [turtlebot3_msgs](https://github.com/ROBOTIS-GIT/turtlebot3_msgs)
