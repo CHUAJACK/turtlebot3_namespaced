@@ -47,23 +47,23 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        base_footprint:
+        <frame_ns>base_footprint:
           Value: true
-        base_link:
+        <frame_ns>base_link:
           Value: true
-        base_scan:
+        <frame_ns>base_scan:
           Value: true
-        caster_back_link:
+        <frame_ns>caster_back_link:
           Value: true
-        imu_link:
+        <frame_ns>imu_link:
           Value: true
-        map:
+        <frame_ns>map:
           Value: true
-        odom:
+        <frame_ns>odom:
           Value: true
-        wheel_left_link:
+        <frame_ns>wheel_left_link:
           Value: true
-        wheel_right_link:
+        <frame_ns>wheel_right_link:
           Value: true
       Marker Scale: 1
       Name: TF
@@ -71,19 +71,19 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        map:
-          odom:
-            base_footprint:
-              base_link:
-                base_scan:
+        <frame_ns>map:
+          <frame_ns>odom:
+            <frame_ns>base_footprint:
+              <frame_ns>base_link:
+                <frame_ns>base_scan:
                   {}
-                caster_back_link:
+                <frame_ns>caster_back_link:
                   {}
-                imu_link:
+                <frame_ns>imu_link:
                   {}
-                wheel_left_link:
+                <frame_ns>wheel_left_link:
                   {}
-                wheel_right_link:
+                <frame_ns>wheel_right_link:
                   {}
       Update Interval: 0
       Value: true
@@ -402,7 +402,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: map
+    Fixed Frame: <frame_ns>map
     Frame Rate: 30
   Name: root
   Tools:

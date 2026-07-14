@@ -30,7 +30,7 @@ from launch_ros.actions import Node
 def generate_launch_description():
     TURTLEBOT3_MODEL = os.environ['TURTLEBOT3_MODEL']
 
-    namespace = LaunchConfiguration('namespace')
+    namespace = LaunchConfiguration('namespace', default='')
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
     urdf_file_name = 'turtlebot3_' + TURTLEBOT3_MODEL + '.urdf'
@@ -67,5 +67,6 @@ def generate_launch_description():
             output='screen',
             parameters=[
                     rsp_params,
-                    {'use_sim_time': use_sim_time}])
+                    {'use_sim_time': use_sim_time}],
+            remappings=[('/tf', 'tf'), ('/tf_static', 'tf_static')])
     ])

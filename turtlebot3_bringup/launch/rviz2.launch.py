@@ -20,20 +20,41 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch_ros.actions import Node
+from nav2_common.launch import ReplaceString
 
 
 def generate_launch_description():
+    namespace = LaunchConfiguration('namespace', default='')
+    # 'tb3_1/' (or '') for frame IDs; '/tb3_1' (or '') for absolute topic names.
+    frame_prefix = PythonExpression(["'' if '", namespace, "' == '' else '", namespace, "/'"])
+    topic_prefix = PythonExpression(["'' if '", namespace, "' == '' else '/", namespace, "'"])
+
     rviz_config_dir = os.path.join(
         get_package_share_directory('turtlebot3_description'),
         'rviz',
         'model.rviz')
 
+    namespaced_rviz_config = ReplaceString(
+        source_file=rviz_config_dir,
+        replacements={'<frame_ns>': frame_prefix, '<topic_ns>': topic_prefix},
+    )
+
     return LaunchDescription([
+        DeclareLaunchArgument(
+            'namespace',
+            default_value='',
+            description='Top-level namespace'),
         Node(
             package='rviz2',
             executable='rviz2',
             name='rviz2',
-            arguments=['-d', rviz_config_dir],
+            arguments=['-d', namespaced_rviz_config],
+            remappings=[
+                ('/tf', [topic_prefix, '/tf']),
+                ('/tf_static', [topic_prefix, '/tf_static']),
+            ],
             output='screen'),
     ])

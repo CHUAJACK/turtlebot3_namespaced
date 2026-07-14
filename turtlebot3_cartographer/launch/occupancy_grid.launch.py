@@ -21,11 +21,17 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
+    namespace = LaunchConfiguration('namespace', default='')
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
     resolution = LaunchConfiguration('resolution', default='0.05')
     publish_period_sec = LaunchConfiguration('publish_period_sec', default='1.0')
 
     return LaunchDescription([
+        DeclareLaunchArgument(
+            'namespace',
+            default_value='',
+            description='Namespace to apply to the occupancy grid node'),
+
         DeclareLaunchArgument(
             'resolution',
             default_value=resolution,
@@ -45,7 +51,9 @@ def generate_launch_description():
             package='cartographer_ros',
             executable='cartographer_occupancy_grid_node',
             name='cartographer_occupancy_grid_node',
+            namespace=namespace,
             output='screen',
             parameters=[{'use_sim_time': use_sim_time}],
+            remappings=[('/tf', 'tf'), ('/tf_static', 'tf_static')],
             arguments=['-resolution', resolution, '-publish_period_sec', publish_period_sec]),
     ])

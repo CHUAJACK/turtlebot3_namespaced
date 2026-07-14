@@ -21,12 +21,22 @@ from launch.actions import DeclareLaunchArgument
 from launch.conditions import IfCondition
 from launch.launch_description import LaunchDescription
 from launch.substitutions import LaunchConfiguration
+from launch.substitutions import PythonExpression
 
 from launch_ros.actions import ComposableNodeContainer
 from launch_ros.descriptions import ComposableNode
 
 
 def generate_launch_description() -> LaunchDescription:
+
+    namespace = LaunchConfiguration('namespace', default='')
+    namespace_launch_arg = DeclareLaunchArgument(
+        'namespace',
+        default_value='',
+        description='Top-level namespace'
+    )
+    # '/tb3_1' (or '') for absolute topic names.
+    topic_prefix = PythonExpression(["'' if '", namespace, "' == '' else '/", namespace, "'"])
 
     camera_param_name = 'camera'
     camera_param_default = str(0)
@@ -99,7 +109,7 @@ def generate_launch_description() -> LaunchDescription:
             ComposableNode(
                 package='image_view',
                 plugin='image_view::ImageViewNode',
-                remappings=[('/image', '/camera/image_raw')],
+                remappings=[('/image', [topic_prefix, '/camera/image_raw'])],
                 extra_arguments=[{'use_intra_process_comms': True}],
                 condition=IfCondition(use_image_view_param),
             )
@@ -107,13 +117,14 @@ def generate_launch_description() -> LaunchDescription:
 
     container = ComposableNodeContainer(
         name='camera_container',
-        namespace='',
+        namespace=namespace,
         package='rclcpp_components',
         executable='component_container',
         composable_node_descriptions=composable_nodes,
     )
 
     return LaunchDescription([
+        namespace_launch_arg,
         camera_launch_arg,
         format_launch_arg,
         use_image_view_launch_arg,

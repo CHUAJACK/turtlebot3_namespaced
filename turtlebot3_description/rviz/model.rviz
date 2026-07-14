@@ -73,7 +73,7 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Best Effort
-        Value: /scan
+        Value: <topic_ns>/scan
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
@@ -87,7 +87,7 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /robot_description
+        Value: <topic_ns>/robot_description
       Enabled: true
       Links:
         All Links Enabled: true
@@ -95,35 +95,35 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        base_footprint:
+        <frame_ns>base_footprint:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        base_scan:
+        <frame_ns>base_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        caster_back_link:
+        <frame_ns>base_scan:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        imu_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        wheel_left_link:
+        <frame_ns>caster_back_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        wheel_right_link:
+        <frame_ns>imu_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        <frame_ns>wheel_left_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        <frame_ns>wheel_right_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -138,21 +138,21 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        base_footprint:
+        <frame_ns>base_footprint:
           Value: true
-        base_link:
+        <frame_ns>base_link:
           Value: true
-        base_scan:
+        <frame_ns>base_scan:
           Value: true
-        caster_back_link:
+        <frame_ns>caster_back_link:
           Value: true
-        imu_link:
+        <frame_ns>imu_link:
           Value: true
-        odom:
+        <frame_ns>odom:
           Value: true
-        wheel_left_link:
+        <frame_ns>wheel_left_link:
           Value: true
-        wheel_right_link:
+        <frame_ns>wheel_right_link:
           Value: true
       Marker Scale: 1
       Name: TF
@@ -160,18 +160,18 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        odom:
-          base_footprint:
-            base_link:
-              base_scan:
+        <frame_ns>odom:
+          <frame_ns>base_footprint:
+            <frame_ns>base_link:
+              <frame_ns>base_scan:
                 {}
-              caster_back_link:
+              <frame_ns>caster_back_link:
                 {}
-              imu_link:
+              <frame_ns>imu_link:
                 {}
-              wheel_left_link:
+              <frame_ns>wheel_left_link:
                 {}
-              wheel_right_link:
+              <frame_ns>wheel_right_link:
                 {}
       Update Interval: 0
       Value: true
@@ -211,12 +211,12 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /odom
+        Value: <topic_ns>/odom
       Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: odom
+    Fixed Frame: <frame_ns>odom
     Frame Rate: 30
   Name: root
   Tools:
@@ -231,7 +231,7 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /move_base_simple/goal
+        Value: <topic_ns>/move_base_simple/goal
     - Class: rviz_default_plugins/PublishPoint
       Single click: true
       Topic:
@@ -239,7 +239,7 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /clicked_point
+        Value: <topic_ns>/clicked_point
   Transformation:
     Current:
       Class: rviz_default_plugins/TF
