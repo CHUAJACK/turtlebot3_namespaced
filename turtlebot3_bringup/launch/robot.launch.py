@@ -24,7 +24,6 @@ from launch.actions import DeclareLaunchArgument
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
-from launch.substitutions import PythonExpression
 from launch.substitutions import ThisLaunchFileDir
 from launch_ros.actions import Node
 from launch_ros.actions import PushRosNamespace
@@ -103,16 +102,13 @@ def generate_launch_description():
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 [ThisLaunchFileDir(), '/turtlebot3_state_publisher.launch.py']),
-            launch_arguments={'use_sim_time': use_sim_time,
-                              'namespace': namespace}.items(),
+            launch_arguments={'use_sim_time': use_sim_time}.items(),
         ),
 
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([lidar_pkg_dir, LDS_LAUNCH_FILE]),
             launch_arguments={'port': '/dev/ttyUSB0',
-                              'frame_id': PythonExpression(
-                                  ['"', namespace, '" + "/base_scan" if "',
-                                   namespace, '" != "" else "base_scan"']),
+                              'frame_id': 'base_scan',
                               'namespace': ''}.items(),
         ),
 
@@ -121,7 +117,13 @@ def generate_launch_description():
             executable='turtlebot3_ros',
             parameters=[
                 tb3_param_dir,
-                {'namespace': namespace}],
+                # Must be passed, and must stay EMPTY. odometry.cpp / imu.cpp /
+                # joint_state.cpp prepend this to their frame IDs (and to the
+                # wheel joint names) whenever it is non-empty; an empty value
+                # keeps every frame bare. It cannot simply be omitted: the nodes
+                # declare it with no default, so a missing override raises
+                # NoParameterOverrideProvided at startup.
+                {'namespace': ''}],
             arguments=['-i', usb_port],
             remappings=[('/tf', 'tf'), ('/tf_static', 'tf_static')],
             output='screen'),

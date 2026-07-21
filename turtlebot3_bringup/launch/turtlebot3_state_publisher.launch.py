@@ -23,14 +23,11 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import Command
 from launch.substitutions import LaunchConfiguration
-from launch.substitutions import PythonExpression
 from launch_ros.actions import Node
 
 
 def generate_launch_description():
     TURTLEBOT3_MODEL = os.environ['TURTLEBOT3_MODEL']
-
-    namespace = LaunchConfiguration('namespace', default='')
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
     urdf_file_name = 'turtlebot3_' + TURTLEBOT3_MODEL + '.urdf'
@@ -42,12 +39,10 @@ def generate_launch_description():
         'urdf',
         urdf_file_name)
 
-    robot_desc = Command([
-        'xacro ',
-        urdf,
-        ' namespace:=',
-        PythonExpression(['"', namespace, '" + "/" if "', namespace, '" != "" else ""']),
-    ])
+    # The URDF's ${namespace} link prefix is left at its empty default: frames
+    # are bare (base_footprint, base_link, base_scan ...) on every robot, and
+    # multi-robot isolation comes from the namespaced /tf topics remapped below.
+    robot_desc = Command(['xacro ', urdf])
 
     # Major refactor of the robot_state_publisher
     # Reference page: https://github.com/ros2/demos/pull/426
