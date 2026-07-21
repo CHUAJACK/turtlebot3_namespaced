@@ -54,9 +54,10 @@ def generate_launch_description():
     #              https://github.com/ros2/launch_ros/issues/56
     remappings = [('/tf', 'tf'), ('/tf_static', 'tf_static')]
 
-    # '<frame_ns>' placeholder in the params -> '<namespace>/' (or '' when empty) so the
-    # AMCL/map_server frames follow the launch namespace. Runs before RewrittenYaml.
-    frame_prefix = PythonExpression(["'' if '", namespace, "' == '' else '", namespace, "/'"])
+    # Frames are BARE (base_link, odom, map ...) on every robot: multi-robot
+    # isolation comes from the namespaced /tf topics, not from frame names.
+    # '<frame_ns>' in the params resolves to nothing. Runs before RewrittenYaml.
+    frame_prefix = ''
     namespaced_params = ReplaceString(
         source_file=params_file,
         replacements={'<frame_ns>': frame_prefix},

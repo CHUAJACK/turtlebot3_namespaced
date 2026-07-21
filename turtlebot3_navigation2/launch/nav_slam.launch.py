@@ -63,8 +63,10 @@ def generate_launch_description():
         'tb3_navigation2.rviz')
 
     # Substitute the '<frame_ns>' (frames) and '<topic_ns>' (topics) placeholders in the
-    # RViz config so it follows the launch namespace.
-    frame_prefix = PythonExpression(["'' if '", namespace, "' == '' else '", namespace, "/'"])
+    # RViz config. Frames are BARE (base_link, odom, map ...) on every robot: multi-robot
+    # isolation comes from the namespaced /tf topics, not from frame names. Only the
+    # display topics still follow the launch namespace.
+    frame_prefix = ''
     namespaced_rviz_config = ReplaceString(
         source_file=rviz_config_dir,
         replacements={'<frame_ns>': frame_prefix, '<topic_ns>': topic_prefix},

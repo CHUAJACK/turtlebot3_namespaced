@@ -25,7 +25,6 @@ from launch.actions import OpaqueFunction
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
-from launch.substitutions import PythonExpression
 from launch.substitutions import ThisLaunchFileDir
 from launch_ros.actions import Node
 from nav2_common.launch import ReplaceString
@@ -40,7 +39,9 @@ def launch_cartographer_node(context, *args, **kwargs):
     config_dir = LaunchConfiguration('cartographer_config_dir').perform(context)
     basename = LaunchConfiguration('configuration_basename').perform(context)
 
-    frame_prefix = '' if namespace == '' else namespace + '/'
+    # Frames are BARE (base_link, odom, map ...) on every robot: multi-robot
+    # isolation comes from the namespaced /tf topics, not from frame names.
+    frame_prefix = ''
     with open(os.path.join(config_dir, basename), 'r') as source:
         rendered = source.read().replace('<frame_ns>', frame_prefix)
 
@@ -75,9 +76,9 @@ def generate_launch_description():
     resolution = LaunchConfiguration('resolution', default='0.05')
     publish_period_sec = LaunchConfiguration('publish_period_sec', default='1.0')
 
-    # 'tb3_1/' (or '') for frame IDs. The cartographer .rviz only namespaces frames
-    # (its display topics are intentionally left un-prefixed, as before).
-    frame_prefix = PythonExpression(["'' if '", namespace, "' == '' else '", namespace, "/'"])
+    # Frames are BARE (base_link, odom, map ...) on every robot: multi-robot
+    # isolation comes from the namespaced /tf topics, not from frame names.
+    frame_prefix = ''
 
     rviz_config_dir = os.path.join(get_package_share_directory('turtlebot3_cartographer'),
                                    'rviz', 'tb3_cartographer.rviz')

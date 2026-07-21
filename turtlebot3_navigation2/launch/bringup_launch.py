@@ -61,7 +61,9 @@ def generate_launch_description():
     # '<frame_ns>' placeholder in the params -> '<namespace>/' (or '' when empty) so every
     # frame ID follows the launch namespace. Unconditional (works for the empty namespace
     # too); the sub-launches re-run this substitution harmlessly (idempotent no-op).
-    frame_prefix = PythonExpression(["'' if '", namespace, "' == '' else '", namespace, "/'"])
+    # Frames are BARE (base_link, odom, map ...) on every robot: multi-robot
+    # isolation comes from the namespaced /tf topics, not from frame names.
+    frame_prefix = ''
     params_file = ReplaceString(
         source_file=params_file,
         replacements={'<frame_ns>': frame_prefix},

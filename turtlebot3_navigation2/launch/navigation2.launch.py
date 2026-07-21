@@ -33,8 +33,10 @@ def generate_launch_description():
     namespace = LaunchConfiguration('namespace', default='')
     # Skip PushROSNamespace (via use_namespace=false) when the namespace is empty.
     use_namespace = PythonExpression(["'false' if '", namespace, "' == '' else 'true'"])
-    # 'tb3_1/' (or '') for frames; '/tb3_1' (or '') for absolute topic/tf names.
-    frame_prefix = PythonExpression(["'' if '", namespace, "' == '' else '", namespace, "/'"])
+    # Frames are BARE (base_link, odom, map ...) on every robot: multi-robot
+    # isolation comes from the namespaced /tf topics, not from frame names.
+    # '/tb3_1' (or '') still prefixes absolute topic/tf names.
+    frame_prefix = ''
     topic_prefix = PythonExpression(["'' if '", namespace, "' == '' else '/", namespace, "'"])
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
     package_dir = get_package_share_directory('turtlebot3_navigation2')

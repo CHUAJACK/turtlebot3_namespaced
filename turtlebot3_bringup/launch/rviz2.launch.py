@@ -28,8 +28,10 @@ from nav2_common.launch import ReplaceString
 
 def generate_launch_description():
     namespace = LaunchConfiguration('namespace', default='')
-    # 'tb3_1/' (or '') for frame IDs; '/tb3_1' (or '') for absolute topic names.
-    frame_prefix = PythonExpression(["'' if '", namespace, "' == '' else '", namespace, "/'"])
+    # Frames are BARE (base_link, odom, map ...) on every robot: multi-robot
+    # isolation comes from the namespaced /tf topics, not from frame names.
+    # '/tb3_1' (or '') still prefixes absolute topic names.
+    frame_prefix = ''
     topic_prefix = PythonExpression(["'' if '", namespace, "' == '' else '/", namespace, "'"])
 
     rviz_config_dir = os.path.join(
